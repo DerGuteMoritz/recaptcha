@@ -22,17 +22,19 @@ module Recaptcha
         html << %{</script>\n}
       else
         html << %{<script type="text/javascript" src="#{uri}/challenge?k=#{key}}
-        html << %{#{error ? "&error=#{CGI::escape(error)}" : ""}"></script>\n}
+        html << %{#{error ? "&amp;error=#{CGI::escape(error)}" : ""}"></script>\n}
         unless options[:noscript] == false
-          html << %{<noscript>\n  }
-          html << %{<iframe src="#{uri}/noscript?k=#{key}" }
-          html << %{height="#{options[:iframe_height] ||= 300}" }
-          html << %{width="#{options[:iframe_width]   ||= 500}" }
-          html << %{frameborder="0"></iframe><br/>\n  }
-          html << %{<textarea name="recaptcha_challenge_field" }
-          html << %{rows="#{options[:textarea_rows] ||= 3}" }
-          html << %{cols="#{options[:textarea_cols] ||= 40}"></textarea>\n  }
-          html << %{<input type="hidden" name="recaptcha_response_field" value="manual_challenge">}
+          html << %{<noscript>\n}
+          html << %{  <div id="non_js_recaptcha">\n}
+          html << %{    <object type="text/html" data="#{uri}/noscript?k=#{key}"}
+          html << %{ height="#{options[:iframe_height] ||= 300}" }
+          html << %{ width="#{options[:iframe_width]   ||= 500}">\n}
+          html << %{    </object>\n}
+          html << %{    <textarea name="recaptcha_challenge_field"}
+          html << %{ rows="#{options[:textarea_rows] ||= 3}"}
+          html << %{ cols="#{options[:textarea_cols] ||= 40}"></textarea>\n}
+          html << %{    <input type="hidden" name="recaptcha_response_field" value="manual_challenge" />\n}
+          html << %{  </div>\n}
           html << %{</noscript>\n}
         end
       end
